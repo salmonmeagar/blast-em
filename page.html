@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BLAST M</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+	<meta name=keywords content="Simon Eagar, Simon Rex Eagar, noseman, adventures of noseman, simb0rg, simborg, projects, student projects, cool swords, scorched earth, tanks, tank, tank sandbox, sandbox, burn, burnt tanks, burnt">
+	<meta name=description content="thing by simon eagar">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+</head>
+	<style>
+		.dragdiv {
+			position: absolute;
+			z-index: 9;
+			background-color: #b2b2b2;
+			border-top: 1px solid #e2e2e2;
+			border-left: 1px solid #e2e2e2;
+			border-bottom: 1px solid #424242;
+			border-right: 1px solid #424242;
+			text-align: center;
+			zoom: 1;
+		}
+
+		.dragdivheader {
+			padding: 10px;
+			z-index: 10;
+			background-color: #a2a2a2;
+			border-top: 1px solid #424242;
+			border-left: 1px solid #424242;
+			border-bottom: 1px solid #e2e2e2;
+			border-right: 1px solid #e2e2e2;
+			margin-top: 1px;
+			margin-bottom: 1px;
+			margin-right: 1px;
+			margin-left: 1px;
+			padding-top: 2px;
+			padding-bottom: 2px;
+			padding-right: 2px;
+			padding-left: 2px;
+		}
+		
+		button {
+			font-smooth: never;
+			-webkit-font-smoothing : none;
+			font-size: 8px;
+			font-family: lemmingFont;
+			background-color: #b2b2b2;
+			border-top: 1px solid #e2e2e2;
+			border-left: 1px solid #e2e2e2;
+			border-bottom: 1px solid #424242;
+			border-right: 1px solid #424242;
+			padding-right: 1px;
+			padding-left: 1px;
+			margin-right: 1px;
+			margin-left: 1px;
+			margin-bottom: 4px;
+		}
+		
+		#dialogdiv {
+			top: 6;
+			left: 6;
+		}
+		
+		@font-face {
+			font-family: lemmingFont;
+			src: url(Lemming.ttf);
+		}
+		
+		p {
+			margin-top: 2px;
+			margin-bottom: 2px;
+			margin-right: 2px;
+			margin-left: 2px;
+		}
+
+		body {
+			width: 100%;
+			height: 100%;
+			font-smooth: never;
+			-webkit-font-smoothing : none;
+			margin: 0;
+			font-size: 8px;
+			font-family: lemmingFont;
+			user-select:none;
+		}
+		
+		#canvasIcon {
+			position: relative;
+			width: 10px;
+			height: 10px;
+			background-color: #a2a2a2;
+			border-top: 1px solid #424242;
+			border-left: 1px solid #424242;
+			border-bottom: 1px solid #e2e2e2;
+			border-right: 1px solid #e2e2e2;
+			margin-top: 0px;
+			margin-bottom: 1px;
+		}
+		
+		#weaponDiv {
+			padding: 10px;
+			background-color: #a2a2a2;
+			border-top: 1px solid #424242;
+			border-left: 1px solid #424242;
+			border-bottom: 1px solid #e2e2e2;
+			border-right: 1px solid #e2e2e2;
+			margin-top: 1px;
+			margin-bottom: 1px;
+			margin-right: 1px;
+			margin-left: 1px;
+			padding-top: 2px;
+			padding-bottom: 2px;
+			padding-right: 2px;
+			padding-left: 2px;
+			text-align: right;
+		}
+		
+		input {
+			background-color: #a2a2a2;
+			border-top: 1px solid #424242;
+			border-left: 1px solid #424242;
+			border-bottom: 1px solid #e2e2e2;
+			border-right: 1px solid #e2e2e2;
+			margin-top: 1px;
+			margin-bottom: 1px;
+			margin-right: 1px;
+			margin-left: 1px;
+			padding-top: 2px;
+			padding-bottom: 2px;
+			padding-right: 2px;
+			padding-left: 2px;
+			font-smooth: never;
+			-webkit-font-smoothing : none;
+			margin: 0;
+			font-size: 8px;
+			font-family: lemmingFont;
+		}
+		
+		canvas {  
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -webkit-crisp-edges;
+			image-rendering: pixelated;
+			image-rendering: crisp-edges;
+			position:absolute;
+			top: 0px;
+			left: 0px;
+		}
+		
+		input[type=number]::-webkit-inner-spin-button {
+			
+		}
+	</style>
+	<body bgcolor="#000000" >
+		simb0rg.com<br>thing by Simon Eagar<br>welcome to the menu
+		<div>
+			
+			<button id='startButton' onmousedown = startGame()>Start Game</button>
+			
+			<canvas id="bgCanvas" style="display: none; top: 3px; left: 3px">
+			</canvas>
+			
+			<canvas id="trCanvas" style="display: none; top: 3px; left: 3px">
+			</canvas>
+			
+			<canvas id="htrCanvas" style="display: none; top: 3px; left: 3px">
+			</canvas>
+			
+			<canvas id="clickCanvas" style="display: none; " onmousedown=mclick(event) onmousemove=mdrag(event) onmouseup=mrelease(event) oncontextmenu="return false;">
+			</canvas>
+			
+			<div id="menudiv" style="display: none; top: 24px; left: 6px;" class = "dragdiv">
+				<!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+				<div id="menudivheader" class = "dragdivheader" style="cursor: move"></div>
+				<div style="display: flex;">
+					<div style="flex-grow: 1;" id="hpDiv" class = "dragdivheader"></div>
+					<div style="flex-grow: 1;" id="windDiv" class = "dragdivheader"></div>
+				</div>
+				<div style="float: left; text-align: center; margin-top: 1px;">
+					<div style="display: flex; justify-content: space-between;">
+						<button onclick = changeWeapon(0)>&lt;</button>  <canvas id='canvasIcon'></canvas>  <button onclick = changeWeapon(1)>&gt;</button>
+					</div>
+					<br>
+					<div style="display: flex; justify-content: space-between;">
+						<button onmousedown = startCounter(2) onmouseup = endCounter()>&lt;</button><div id='angleDiv'></div><button onmousedown = startCounter(3) onmouseup = endCounter()>&gt;</button>
+					</div>
+					<br>
+					<div style="display: flex; justify-content: space-between;">
+						<button onmousedown = startCounter(0) onmouseup = endCounter()>v</button><div id='powerDiv'></div></canvas> <button onmousedown = startCounter(1) onmouseup = endCounter()>^</button>
+					</div>
+					<br>
+					<div style="display: flex; justify-content: space-between;">
+						<button onclick = key(188)>&lt;</button> <button onclick = key(32)>FIRE</button> <button onclick = key(190)>&gt;</button>
+					</div>
+				</div>
+				<div style = 'float: right'>
+					<p id = 'regWeapon' style = 'display: none'></p>
+					<div id = 'weaponDiv'>
+						<div class='quantityDiv' style = 'float: left'></div><input type="number" class="quantity" name="quantity" onkeypress = {event.preventDefault();} value="1" min="0" max="10">
+						<br>
+						<div class='quantityDiv' style = 'float: left'></div><input type="number" class="quantity" name="quantity" onkeypress = {event.preventDefault();} value="0" min="0" max="10">
+						<br>
+						<div class='quantityDiv' style = 'float: left'></div><input type="number" class="quantity" name="quantity" onkeypress = {event.preventDefault();} value="0" min="0" max="10">
+						<br>
+						<div class='quantityDiv' style = 'float: left'></div><input type="number" class="quantity" name="quantity" onkeypress = {event.preventDefault();} value="0" min="0" max="10">
+					</div>
+					<br>
+					<div id="pointsDiv" class = "dragdivheader"></div>
+				</div>
+			</div>
+			
+			<div id="scorediv" style="display: none; top: 24px; left: 175px;" class = "dragdiv">
+				<!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+				<div id="scoredivheader" class = "dragdivheader" style="cursor: move">players</div>
+				<table>
+				  <tr>
+					<th>Name</th>
+					<th>Points</th>
+					<th>Health</th>
+				  </tr>
+				  <tr>
+					<td>sinom</td>
+					<td>5</td>
+					<td>30/30</td>
+				  </tr>
+				  <tr>
+					<td>mals</td>
+					<td>5</td>
+					<td>60/60</td>
+				  </tr>
+				  <tr>
+					<td>soog</td>
+					<td>5</td>
+					<td>40/40</td>
+				  </tr>
+				  <tr>
+					<td>ijoop</td>
+					<td>5</td>
+					<td>10/10</td>
+				  </tr>
+				</table>
+			</div>
+			
+			<div id="dialogdiv" class = "dragdiv" style="display: none; top: 6px; left: 6px; cursor: move">
+				<!-- Include a header DIV with the same name as the draggable DIV, followed by "header" -->
+				<div id="dialogdivheader" class = "dragdivheader" style="padding: 2px">nothing has happened yet.</div>
+			</div>
+
+		</div>
+		
+		<script>
+            !function(a,b){var l,c=eval("this"),d=256,g="random",h=b.pow(d,6),i=b.pow(2,52),j=2*i,k=d-1;function m(r,t,e){function u(){for(var n=m.g(6),r=h,t=0;n<i;)n=(n+t)*d,r*=d,t=m.g(1);for(;j<=n;)n/=2,r/=2,t>>>=1;return(n+t)/r}var f=[],p=q(function n(r,t){var e,o=[],i=typeof r;if(t&&"object"==i)for(e in r)try{o.push(n(r[e],t-1))}catch(n){}return o.length?o:"string"==i?r:r+"\0"}((t=1==t?{entropy:!0}:t||{}).entropy?[r,s(a)]:null==r?function(){try{var n;return l&&(n=l.randomBytes)?n=n(d):(n=new Uint8Array(d),(c.crypto||c.msCrypto).getRandomValues(n)),s(n)}catch(n){var r=c.navigator,t=r&&r.plugins;return[+new Date,c,t,c.screen,s(a)]}}():r,3),f),m=new n(f);return u.int32=function(){return 0|m.g(4)},u.quick=function(){return m.g(4)/4294967296},u.double=u,q(s(m.S),a),(t.pass||e||function(n,r,t,e){return e&&(e.S&&o(e,m),n.state=function(){return o(m,{})}),t?(b[g]=n,r):n})(u,p,"global"in t?t.global:this==b,t.state)}function n(n){var r,t=n.length,u=this,e=0,o=u.i=u.j=0,i=u.S=[];for(t||(n=[t++]);e<d;)i[e]=e++;for(e=0;e<d;e++)i[e]=i[o=k&o+n[e%t]+(r=i[e])],i[o]=r;(u.g=function(n){for(var r,t=0,e=u.i,o=u.j,i=u.S;n--;)r=i[e=k&e+1],t=t*d+i[k&(i[e]=i[o=k&o+r])+(i[o]=r)];return u.i=e,u.j=o,t})(d)}function o(n,r){return r.i=n.i,r.j=n.j,r.S=n.S.slice(),r}function q(n,r){for(var t,e=n+"",o=0;o<e.length;)r[k&o]=k&(t^=19*r[k&o])+e.charCodeAt(o++);return s(r)}function s(n){return String.fromCharCode.apply(0,n)}if(q(b.random(),a),"object"==typeof module&&module.exports){module.exports=m;try{l=require("crypto")}catch(n){}}else"function"==typeof define&&define.amd?define(function(){return m}):b["seed"+g]=m}([],Math);
+		</script>
+		<script>
+		
+		// Make the DIV element draggable:
+		var x = document.getElementsByClassName("dragdiv");
+		for (var i in x) {
+			dragElement(x[i]);
+		}
+
+		function dragElement(elmnt) {
+		  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+		  if (document.getElementById(elmnt.id + "header")) {
+			// if present, the header is where you move the DIV from:
+			document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+		  } else {
+			// otherwise, move the DIV from anywhere inside the DIV:
+			elmnt.onmousedown = dragMouseDown;
+		  }
+
+		  function dragMouseDown(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// get the mouse cursor position at startup:
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			document.onmouseup = closeDragElement;
+			// call a function whenever the cursor moves:
+			document.onmousemove = elementDrag;
+		  }
+
+		  function elementDrag(e) {
+			e = e || window.event;
+			e.preventDefault();
+			// calculate the new cursor position:
+			pos1 = pos3 - e.clientX;
+			pos2 = pos4 - e.clientY;
+			pos3 = e.clientX;
+			pos4 = e.clientY;
+			// set the element's new position:
+			elmnt.style.top = (elmnt.offsetTop - pos2/2*window.devicePixelRatio) + "px";
+			elmnt.style.left = (elmnt.offsetLeft - pos1/2*window.devicePixelRatio) + "px";
+		  }
+
+		  function closeDragElement() {
+			// stop moving when mouse button is released:
+			document.onmouseup = null;
+			document.onmousemove = null;
+		  }
+		}
+		function createArray(length) {
+			var arr = new Array(length || 0),
+				i = length;
+
+			if (arguments.length > 1) {
+				var args = Array.prototype.slice.call(arguments, 1);
+				while(i--) arr[length-1 - i] = createArray.apply(this, args);
+			}
+
+			return arr;
+		}
+		function copyTextToClipboard(text) {
+			var textArea = document.createElement("textarea");
+			textArea.style.position = 'fixed';
+			textArea.style.top = 0;
+			textArea.style.left = 0;
+			textArea.style.width = '2em';
+			textArea.style.height = '2em';
+			textArea.style.padding = 0;
+			textArea.style.border = 'none';
+			textArea.style.outline = 'none';
+			textArea.style.boxShadow = 'none';
+			textArea.style.background = 'transparent';
+			textArea.value = text;
+			document.body.appendChild(textArea);
+			textArea.focus();
+			textArea.select();
+			try {
+				var successful = document.execCommand('copy');
+				var msg = successful ? 'successful' : 'unsuccessful';
+				console.log('Copying text command was ' + msg);
+			} catch (err) {
+				console.log('Oops, unable to copy');
+			}
+			document.body.removeChild(textArea);
+		}
+		</script>
+		<script src=script.js></script>
+	</body>
+</html>
